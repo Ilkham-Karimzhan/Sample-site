@@ -1,54 +1,58 @@
-import * as cartApi from '@/api/cart.js';
+import * as cartApi from "@/api/cart.js";
 
 export default {
-	async load({ commit }){
-		let savedToken = localStorage.getItem('cartToken');
-		let { token, needUpdate, cart } = await cartApi.load(savedToken);
-		
-		if(needUpdate){
-			localStorage.setItem('cartToken', token);
-		}
-			
-		commit('set', { cart, token });
-	},
-	async add({ state, getters, commit }, { id }){
-		if(getters.canAdd(id)){
-			commit('startProccess', id);
-			let res = await cartApi.add(state.token, id)
-					
-			if(res === true){
-				commit('add', { id });		
-			}	
+  async load({ commit }) {
+    let savedToken = localStorage.getItem("cartToken");
+    let { res, data } = await cartApi.load(savedToken);
 
-			commit('endProccess', id);
-		}
-	},
-	async remove({ state, getters, commit }, { id }){
-		if(getters.canUpdate(id)){
-			commit('startProccess', id);
-			let res = await cartApi.remove(state.token, id)
+    if (res) {
+      let { token, needUpdate, cart } = data;
 
-			if(res === true){
-				commit('remove', { ind: getters.index(id) });
-			}
+      if (needUpdate) {
+        localStorage.setItem("cartToken", token);
+      }
 
-			commit('endProccess', id);
-		}
-	},
-	async setCnt({ state, getters, commit, dispatch }, { id, cnt }){
-		if(getters.canUpdate(id)){
-			commit('startProccess', id);
-			let validCnt = Math.max(1, cnt);
-			let res = await cartApi.change(state.token, id, validCnt)
-			
-			if(res === true){
-				commit('setCnt', { ind: getters.index(id), cnt: validCnt });
-			}
-			
-			commit('endProccess', id);
-		}
-	}
-}
+      commit("set", { cart, token });
+    }
+  },
+  async add({ state, getters, commit }, { id }) {
+    if (getters.canAdd(id)) {
+      commit("startProccess", id);
+      let { res, data } = await cartApi.add(state.token, id);
+
+      if (res && data) {
+        commit("add", { id });
+      }
+
+      commit("endProccess", id);
+    }
+  },
+  async remove({ state, getters, commit }, { id }) {
+    if (getters.canUpdate(id)) {
+      commit("startProccess", id);
+      let { res, data } = await cartApi.remove(state.token, id);
+
+      if (res && data) {
+        commit("remove", { ind: getters.index(id) });
+      }
+
+      commit("endProccess", id);
+    }
+  },
+  async setCnt({ state, getters, commit, dispatch }, { id, cnt }) {
+    if (getters.canUpdate(id)) {
+      commit("startProccess", id);
+      let validCnt = Math.max(1, cnt);
+      let { res, data } = await cartApi.change(state.token, id, validCnt);
+
+      if (res && data) {
+        commit("setCnt", { ind: getters.index(id), cnt: validCnt });
+      }
+
+      commit("endProccess", id);
+    }
+  },
+};
 
 /*
 
@@ -58,14 +62,14 @@ async add({ state, getters, commit, dispatch }, { id }){
 
 			try{
 				let res = await cartApi.add(state.token, id)
-					
+
 				if(res === true){
-					commit('add', { id });		
-				}	
+					commit('add', { id });
+				}
 			}
 			catch(e){
-				dispatch('alerts/add', { 
-					text: 'Ошибка ответа сервера при добавлении товара' 
+				dispatch('alerts/add', {
+					text: 'Ошибка ответа сервера при добавлении товара'
 				}, { root: true });
 			}
 			finally{
