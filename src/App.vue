@@ -59,13 +59,28 @@ export default {
         {route: 'products', title: 'Products', exact: true},
         {route: 'cart', title: 'Cart', exact: true},
         {route: 'checkout', title: 'Checkout', exact: true},
-        /* { route: 'office', title: 'Office', exact: false } */
+        {route: 'office', title: 'Office', exact: false}
       ]
     }
   },
   computed: {
     ...mapGetters('cart', {cartCount: 'totalCnt', cartTotal: 'totalSum'}),
+    ...mapGetters('user', ['isLogin']),
     ...mapGetters('alerts', {alerts: 'all'}),
+    menuItems() {
+      let menu = [
+        {route: 'products', title: 'Products', exact: true},
+        {route: 'cart', title: 'Cart', exact: true},
+        {route: 'checkout', title: 'Checkout', exact: true},
+      ]
+      menu.push(
+          this.isLogin ?
+              {route: 'office', title: 'Office', exact: false} :
+              {route: 'login', title: 'Login', exact: false}
+      )
+
+      return menu
+    }
   },
   components: {
     AppAlerts

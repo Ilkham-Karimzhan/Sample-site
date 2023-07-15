@@ -16,7 +16,7 @@ import {mapGetters} from "vuex";
 
 export default {
   computed: {
-    ...mapGetters('alerts', {alerts: 'all'})
+    ...mapGetters('alerts', {alerts: 'all'}),
     location() {
       return window.location
     }

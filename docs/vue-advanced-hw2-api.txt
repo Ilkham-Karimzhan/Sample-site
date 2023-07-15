@@ -1,0 +1,99 @@
+Root = http://faceprog.ru/vue-advanced-api/
+
+Пока что в системе 1 пользователь admin / 12345
+Токен живёт всего 2 минуты.
+
+// НОВЫЕ ЧАСТИ API
+
+auth/check.php
+
+GET - проверить наличие активного токена
+	return
+		good -> 200, { res: true, user: { login, name } }
+		bad  -> 401
+
+// ----------------------------------------------------------------------------
+		
+auth/logout.php
+
+GET - выйти из системы
+	return true, setCookie expire = time() - 1
+
+// ----------------------------------------------------------------------------	
+	
+orders.php
+
+GET - получить список заказов
+	return
+		good -> 200, { orders: [] }
+		bad  -> 401
+	
+	
+// УЖЕ РЕАЛИЗОВАНО ВЗАИМОДЕЙСТВИЕ С
+// ----------------------------------------------------------------------------
+
+auth/login.php
+
+POST - войти в систему
+	body json object with keys
+		(str) login
+		(int) password
+	
+	return 
+		good -> { res: true, user: { login, name } }, setCookie(httponly accessToken)
+		bad  -> { res: false, errors: [] }
+		
+// ----------------------------------------------------------------------------
+
+products.php (99% http 200, 1% http 500)
+
+GET - получить все товары 
+	params - none
+
+	return Array of Objects
+		each object has keys
+			(int) id - id товара
+			(str) title - название товара
+			(int) price - цена
+			(int) rest - остаток на складе
+			
+// ----------------------------------------------------------------------------			
+
+cart.php (95% http 200, 5% http 500)
+
+GET - загрузить корзину
+	params
+		(str) token - токен корзины, если не передан генерируется новая корзина
+
+	return Objects
+		(arr) cart - array of objects {(int) id, (int) cnt}
+		(str) token - текущий токен корзины
+		(bool) needUpdate - выдали ли нам новый токен
+	
+POST - добавить товар в корзину
+	body json object with keys
+		(str) token - токен корзины, required
+		(int) id - id товара, required
+		
+	reutrn bool - удалось ли добавить
+
+PUT - поменять количество товара в корзине
+	body json object with keys
+		(str) token - токен корзины, required
+		(int) id - id товара, required
+		(int) cnt - новое количество, required
+		
+	reutrn bool - удалось ли поменять количество
+
+DELETE - удалить товар из корзины
+	params
+		(str) token - токен корзины, required
+		(int) id - id товара, required
+		
+	reutrn bool - удалось ли удалить
+
+DELETE - очистить корзину
+	params
+		(str) token - токен корзины, required
+		
+	reutrn bool - удалось ли очистить корзину

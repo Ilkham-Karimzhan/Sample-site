@@ -1,14 +1,14 @@
-import { createApp } from 'vue';
-import App from './App.vue';
+import { createApp } from "vue";
+import App from "./App.vue";
 
-import store from './store';
-import router from './router';
+import store from "./store";
+import router from "./router";
+import "bootstrap/dist/css/bootstrap.css";
 
 let app = createApp(App).use(store).use(router);
 
-store.dispatch('cart/load');
-store.dispatch('products/load').then(() => {
-	app.mount('#app');
+store.dispatch("user/autoLogin");
+store.dispatch("cart/load");
+store.dispatch("products/load").then(() => {
+  app.mount("#app");
 });
-
-import 'bootstrap/dist/css/bootstrap.css';
