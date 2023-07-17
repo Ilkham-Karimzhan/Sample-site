@@ -22,6 +22,9 @@
     "@vue/compiler-sfc": "^3.0.0",
     "prettier": "2.8.8"
   },
+  "prettier": {
+    "tabWidth": 2
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",
