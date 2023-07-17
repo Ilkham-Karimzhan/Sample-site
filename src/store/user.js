@@ -6,7 +6,7 @@ export default {
     user: null,
   },
   getters: {
-    isLogin: (state) => state.user !== null,
+    isLogin: (state) => state.user != null,
   },
   mutations: {
     setUser(state, user) {
