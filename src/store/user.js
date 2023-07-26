@@ -1,11 +1,17 @@
 import * as authApi from "@/api/auth";
 
+let readyResolver;
+let readyPromise = new Promise((resolve) => {
+  readyResolver = resolve;
+});
+
 export default {
   namespaced: true,
   state: {
     user: null,
   },
   getters: {
+    ready: (state) => readyPromise,
     isLogin: (state) => state.user != null,
   },
   mutations: {
@@ -15,11 +21,13 @@ export default {
   },
   actions: {
     async autoLogin({ commit }) {
-      let { res, user } = await authApi.login();
+      let { res, user } = await authApi.check();
 
       if (res) {
         commit("setUser", user);
       }
+
+      readyResolver();
     },
     async login({ commit }, { login, password }) {
       let { res, data } = await authApi.login(login, password);

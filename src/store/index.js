@@ -6,6 +6,8 @@ import user from "./user";
 import alerts from "./alerts";
 import { addResponseHandler } from "@/api/http";
 
+import router from "@/router"; // bad tmp
+
 const store = createStore({
   modules: {
     cart,
@@ -28,6 +30,13 @@ addResponseHandler(
     return response;
   },
   function (error) {
+    if (error.response.status === 401) {
+      // clean user data
+      router.push({ name: "login" });
+      location.reload(); // optional to clean all stores
+      return;
+    }
+
     let config = error.response.config;
 
     if ("errorAlert" in config) {

@@ -37,7 +37,8 @@ let routes = [
     name: "login",
     path: "/login",
     component: Login,
-    beforeEnter(from, to, next) {
+    async beforeEnter(from, to, next) {
+      await store.getters["user/ready"];
       store.getters["user/isLogin"] ? next({ name: "office" }) : next();
     },
   },
@@ -69,9 +70,10 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.auth && !store.getters["user/isLogin"]) {
-    next({ name: Login });
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.auth) {
+    await store.getters["user/ready"];
+    store.getters["user/isLogin"] ? next() : next({ name: "login" });
   } else {
     next();
   }
